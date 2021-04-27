@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
-import { ScrumboardContext } from "./ScrumboardContext";
-import Board from "./Board";
+import { ScrumboardContext } from "../scrumboard/ScrumboardContext";
 import { Droppable } from "react-beautiful-dnd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
-import { memberIds } from "./ScrumboardData";
-import { modalModeTypes, AssigneeAvatar } from "./utils";
+import { memberIds } from "../scrumboard/ScrumboardData";
+import { modalModeTypes, AssigneeAvatar } from "../utils";
 import { Scrollbars } from "react-custom-scrollbars";
+import Board from "./Board";
 
 const BoardWrapper = ({
   containerHeight,

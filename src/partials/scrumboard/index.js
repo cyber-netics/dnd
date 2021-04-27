@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
-import { ScrumboardContext } from "./ScrumboardContext";
 import { DragDropContext } from "react-beautiful-dnd";
-import reorder, { reorderQuoteMap } from "./reoreder";
-import ModalForm from "./ModalForm";
-import { modalModeTypes, createCardObject } from "./utils";
-import BoardWrapper from "./BoardWrapper";
+
+import { ScrumboardContext } from "./ScrumboardContext";
+import reorder, { reorderQuoteMap } from "../reoreder";
+import { modalModeTypes, createCardObject } from "../utils";
+
+import BoardWrapper from "../board";
+import ModalForm from "../modal";
 
 const ScrumboardWrapper = (props) => {
   const {

@@ -1,6 +1,6 @@
 import React from "react";
-import { ScrumboardProvider } from "./ScrumboardContext";
-import ScrumboardWrapper from "./ScrumboardWrapper";
+import { ScrumboardProvider } from "./scrumboard/ScrumboardContext";
+import ScrumboardWrapper from "./scrumboard";
 
 const App = (props) => {
   return (
