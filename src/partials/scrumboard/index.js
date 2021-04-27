@@ -1,12 +1,13 @@
-import React, { useContext } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
+import React, { useContext } from 'react';
+import { DragDropContext } from 'react-beautiful-dnd';
 
-import { ScrumboardContext } from "./ScrumboardContext";
-import reorder, { reorderQuoteMap } from "../reoreder";
-import { modalModeTypes, createCardObject } from "../utils";
+import { ScrumboardContext } from './ScrumboardContext';
+import { modalModeTypes, createCardObject } from '../utils';
+import reorder, { reorderQuoteMap } from '../reoreder';
 
-import BoardWrapper from "../board";
-import ModalForm from "../modal";
+import BoardWrapper from '../board';
+import ModalForm from '../modal';
+import { Scrumboard } from '../../components/Shared';
 
 const ScrumboardWrapper = (props) => {
   const {
@@ -24,7 +25,7 @@ const ScrumboardWrapper = (props) => {
 
   const onDragEnd = (result) => {
     if (result.combine) {
-      if (result.type === "COLUMN") {
+      if (result.type === 'COLUMN') {
         const shallow = [...ordered];
         shallow.splice(result.source.index, 1);
         updateOrdered(shallow);
@@ -49,14 +50,11 @@ const ScrumboardWrapper = (props) => {
     const source = result.source;
     const destination = result.destination;
 
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
       return;
     }
 
-    if (result.type === "COLUMN") {
+    if (result.type === 'COLUMN') {
       const newOrdered = reorder(ordered, source.index, destination.index);
       updateOrdered(newOrdered);
       return;
@@ -77,11 +75,11 @@ const ScrumboardWrapper = (props) => {
     const data = columns;
     if (mode === modalModeTypes(0)) {
       let newCard = createCardObject();
-      newCard.name = values.cardTitle ? values.cardTitle : "Untitled Card";
+      newCard.name = values.cardTitle ? values.cardTitle : 'Untitled Card';
       data[currentListId].push(newCard);
       updateColumns(data);
       updateModal(false);
-      updateCurrentListId("");
+      updateCurrentListId('');
     }
 
     if (mode === modalModeTypes(1)) {
@@ -97,10 +95,10 @@ const ScrumboardWrapper = (props) => {
     }
 
     if (mode === modalModeTypes(2)) {
-      data[values.boardTitle ? values.boardTitle : "Untitled Board"] = [];
+      data[values.boardTitle ? values.boardTitle : 'Untitled Board'] = [];
       const newOrdered = [
         ...ordered,
-        ...[values.boardTitle ? values.boardTitle : "Untitled Board"],
+        ...[values.boardTitle ? values.boardTitle : 'Untitled Board'],
       ];
       let newColumns = {};
       newOrdered.forEach((elm) => {
@@ -116,9 +114,9 @@ const ScrumboardWrapper = (props) => {
     <>
       <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
         {props.containerHeight ? (
-          <div className="scrumboard">
+          <Scrumboard>
             <BoardWrapper {...props} />
-          </div>
+          </Scrumboard>
         ) : (
           <BoardWrapper {...props} />
         )}

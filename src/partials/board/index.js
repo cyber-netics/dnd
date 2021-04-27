@@ -1,22 +1,70 @@
-import React, { useContext } from "react";
-import { ScrumboardContext } from "../scrumboard/ScrumboardContext";
-import { Droppable } from "react-beautiful-dnd";
-import { PlusOutlined } from "@ant-design/icons";
-import { Avatar } from "antd";
-import { memberIds } from "../scrumboard/ScrumboardData";
-import { modalModeTypes, AssigneeAvatar } from "../utils";
-import { Scrollbars } from "react-custom-scrollbars";
-import Board from "./Board";
+import React, { useContext } from 'react';
+import styled from 'styled-components';
+import { ScrumboardContext } from '../scrumboard/ScrumboardContext';
+import { Droppable } from 'react-beautiful-dnd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
+import { memberIds } from '../scrumboard/ScrumboardData';
+import { modalModeTypes, AssigneeAvatar } from '../utils';
+import { Scrollbars } from 'react-custom-scrollbars';
+import Board from './Board';
+import { Scrumboard } from '../../components/Shared';
 
-const BoardWrapper = ({
-  containerHeight,
-  useClone,
-  isCombineEnabled,
-  withScrollableColumns,
-}) => {
-  const { ordered, columns, updateModal, updateModalMode } = useContext(
-    ScrumboardContext
-  );
+const ScrumboardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  margin-bottom: 16px;
+`;
+
+const ScrumboardBody = styled(Scrollbars)`
+  flex: 1 1;
+  overflow-x: auto;
+  display: flex;
+
+  > div {
+    flex: 1 1;
+    display: flex;
+  }
+`;
+
+const BoardColum = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  margin: 0 8px 15px;
+  border: 0;
+  background-color: transparent;
+  border-radius: 0.625rem;
+`;
+
+const BoardTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6ebf1;
+  transition: background-color 0.2s ease;
+  padding: 0.625rem 0.9375rem;
+  border-top-left-radius: 0.625rem;
+  border-top-right-radius: 0.625rem;
+`;
+
+const H4 = styled.h4`
+  margin-bottom: 0;
+`;
+
+const AvatarContainer = styled.div`
+  text-align: center;
+`;
+
+const AvatarList = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const BoardWrapper = ({ containerHeight, useClone, isCombineEnabled, withScrollableColumns }) => {
+  const { ordered, columns, updateModal, updateModalMode } = useContext(ScrumboardContext);
 
   const onAddBoardModal = () => {
     updateModal(true);
@@ -31,31 +79,23 @@ const BoardWrapper = ({
       isCombineEnabled={isCombineEnabled}
     >
       {(provided) => (
-        <div
-          className="scrumboard"
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-        >
-          <div className="scrumboard-header">
+        <Scrumboard ref={provided.innerRef} {...provided.droppableProps}>
+          <ScrumboardHeader>
             <div>
               <h3>Backlog</h3>
             </div>
-            <div className="text-right">
-              <div className="d-flex align-items-center">
+            <AvatarContainer>
+              <AvatarList>
                 {memberIds.map((member, i) =>
-                  i < 4 ? (
-                    <AssigneeAvatar key={member} id={member} size={30} chain />
-                  ) : null
+                  i < 4 ? <AssigneeAvatar key={member} id={member} size={30} chain /> : null,
                 )}
                 <Avatar className="ml-n2" size={30}>
-                  <span className="text-gray font-weight-semibold font-size-base">
-                    +9
-                  </span>
+                  <span className="text-gray font-weight-semibold font-size-base">+9</span>
                 </Avatar>
-              </div>
-            </div>
-          </div>
-          <Scrollbars className="scrumboard-body">
+              </AvatarList>
+            </AvatarContainer>
+          </ScrumboardHeader>
+          <ScrumboardBody>
             {ordered.map((key, index) => (
               <Board
                 key={key}
@@ -68,16 +108,16 @@ const BoardWrapper = ({
               />
             ))}
             {provided.placeholder}
-            <div className="board-column add">
-              <div className="board-title" onClick={() => onAddBoardModal()}>
-                <h4 className="mb-0">
+            <BoardColum>
+              <BoardTitle onClick={() => onAddBoardModal()}>
+                <H4>
                   <PlusOutlined />
                   <span>Add List</span>
-                </h4>
-              </div>
-            </div>
-          </Scrollbars>
-        </div>
+                </H4>
+              </BoardTitle>
+            </BoardColum>
+          </ScrumboardBody>
+        </Scrumboard>
       )}
     </Droppable>
   );

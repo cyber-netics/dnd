@@ -1,29 +1,41 @@
-import React from "react";
-import { Avatar, Tooltip } from "antd";
-import { labels, membersDetail } from "./scrumboard/ScrumboardData";
+import React from 'react';
+import styled from 'styled-components';
+import { Tooltip } from 'antd';
+import { Avatar } from '../components/Shared';
+import { labels, membersDetail } from './scrumboard/ScrumboardData';
+
+const AssigneeContainer = styled.div`
+  display: flex;
+`;
+
+const NameText = styled.span`
+  margin-bottom: 0;
+  margin-left: 0.5rem;
+  font-weight: 500;
+`;
 
 const createUID = (len) => {
   const buf = [],
-    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
     charlen = chars.length,
     length = len || 32;
 
   for (let i = 0; i < length; i++) {
     buf[i] = chars.charAt(Math.floor(Math.random() * charlen));
   }
-  return buf.join("");
+  return buf.join('');
 };
 
 export const modalModeTypes = (number) => {
   switch (number) {
     case 0:
-      return "ADD_CARD";
+      return 'ADD_CARD';
     case 1:
-      return "EDIT_CARD";
+      return 'EDIT_CARD';
     case 2:
-      return "ADD_BOARD";
+      return 'ADD_BOARD';
     default:
-      return "";
+      return '';
   }
 };
 
@@ -58,21 +70,16 @@ export const AssigneeAvatar = ({ id, size = 20, name, chain }) => {
     const member = membersDetail.filter((elm) => id === elm.id)[0];
     if (member) {
       return (
-        <div className={`d-flex ${chain ? "ml-n2" : ""}`}>
-          <Tooltip title={name ? "" : member.name}>
+        <AssigneeContainer className={chain ? 'ml-n2' : ''}>
+          <Tooltip title={name ? '' : member.name}>
             <Avatar
-              className="cursor-pointer"
               size={size}
               src={member.img}
-              style={chain ? { border: "2px solid #fff" } : {}}
+              style={chain ? { border: '2px solid #fff' } : {}}
             ></Avatar>
           </Tooltip>
-          {name ? (
-            <span className="mb-0 ml-2 font-weight-semibold">
-              {member.name}
-            </span>
-          ) : null}
-        </div>
+          {name ? <NameText>{member.name}</NameText> : null}
+        </AssigneeContainer>
       );
     }
   }
@@ -82,9 +89,9 @@ export const AssigneeAvatar = ({ id, size = 20, name, chain }) => {
 export const createCardObject = () => {
   return {
     id: createUID(10),
-    name: "",
-    description: "",
-    cover: "",
+    name: '',
+    description: '',
+    cover: '',
     members: [],
     labels: [],
     attachments: [],
@@ -97,9 +104,9 @@ export const createCardObject = () => {
 export const createCommentObject = () => {
   return {
     id: createUID(10),
-    name: "Eileen Horton",
-    src: "/img/avatars/thumb-1.jpg",
-    message: "",
+    name: 'Eileen Horton',
+    src: '/img/avatars/thumb-1.jpg',
+    message: '',
     date: new Date(),
   };
 };

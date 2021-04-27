@@ -1,68 +1,124 @@
-import React from "react";
-import { Draggable, Droppable } from "react-beautiful-dnd";
-import { Card, Tooltip, Tag } from "antd";
-import { getLabelsColor, AssigneeAvatar } from "../utils";
-import {
-  CalendarOutlined,
-  CommentOutlined,
-  PaperClipOutlined,
-} from "@ant-design/icons";
-import moment from "moment";
-import { Scrollbars } from "react-custom-scrollbars";
+import React from 'react';
+import moment from 'moment';
+import styled from 'styled-components';
+import { Card, Tooltip, Tag as AntdTag } from 'antd';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
+
+import { CalendarOutlined, CommentOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { getLabelsColor, AssigneeAvatar } from '../utils';
+
+const DraggableContainer = styled.div`
+  margin-bottom: 1rem !important;
+`;
+
+const DraggableCard = styled(Card)`
+  margin-bottom: 0;
+
+  .ant-card-body {
+    padding: 0.625rem;
+  }
+`;
+
+const Image = styled.img`
+  border-radius: 0.625rem !important;
+  max-width: 100%;
+  height: auto;
+`;
+
+const BoardLabel = styled.div`
+  display: inline-block;
+  width: 2rem;
+  height: 0.1875rem;
+  margin-right: 0.5rem;
+`;
+
+const H4 = styled.h4`
+  margin-bottom: 0.5rem !important;
+`;
+
+const CardInfoContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CardInfoInner = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Tag = styled(AntdTag)`
+  background-color: #f7f7f8 !important;
+`;
+
+const TagTimestamp = styled.span`
+  margin-left: 7px;
+  font-weight: 500;
+`;
+
+const AvatarsContainer = styled.div`
+  display: flex;
+`;
+
+const CountContainer = styled.p`
+  margin-right: 0.5rem;
+  margin-bottom: 0;
+`;
+
+const Count = styled.span`
+  margin-left: 0.25rem;
+`;
+
+const ScrollBars = styled(Scrollbars)`
+  overflow-y: auto;
+  flex: 1 1 auto;
+`;
+
+const BoardDropzone = styled.div`
+  padding: 0 0.9375rem;
+  padding-top: 0.9375rem;
+  height: 100%;
+`;
 
 const InnerCardList = React.memo(function InnerCardList(props) {
   return props.contents?.map((item, index) => (
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(dragProvided, dragSnapshot) => (
-        <div
-          className="mb-3"
+        <DraggableContainer
           key={item.id}
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}
           {...dragProvided.dragHandleProps}
         >
-          <Card
-            hoverable
-            className="board-card"
-            cover={null}
-            onClick={() => props.cardData(item, props.listId)}
-          >
-            {item.cover ? (
-              <img src={item.cover} className="rounded img-fluid" alt="cover" />
-            ) : null}
+          <DraggableCard hoverable cover={null} onClick={() => props.cardData(item, props.listId)}>
+            {item.cover ? <Image src={item.cover} alt="cover" /> : null}
             {item.labels.map((label) => (
               <Tooltip title={label} key={label}>
-                <div className={`board-label ${getLabelsColor(label)}`}></div>
+                {/* Dnamic styling */}
+                <BoardLabel className={`board-label ${getLabelsColor(label)}`}></BoardLabel>
               </Tooltip>
             ))}
-            <h4 className="mb-2">{item.name}</h4>
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="d-flex align-items-center">
+            <H4>{item.name}</H4>
+            <CardInfoContainer>
+              <CardInfoInner>
                 {item.dueDate ? (
-                  <Tag className="bg-gray-lightest">
+                  <Tag>
                     <CalendarOutlined />
-                    <span className="ml-1 font-weight-semibold">
-                      {moment(item.dueDate).format("DD MMMM")}
-                    </span>
+                    <TagTimestamp>{moment(item.dueDate).format('DD MMMM')}</TagTimestamp>
                   </Tag>
                 ) : null}
-                <SubIndicator
-                  counts={item.comments.length}
-                  icon={<CommentOutlined />}
-                />
-                <SubIndicator
-                  counts={item.attachments.length}
-                  icon={<PaperClipOutlined />}
-                />
-              </div>
-              <div className="d-flex">
+                <SubIndicator counts={item.comments.length} icon={<CommentOutlined />} />
+                <SubIndicator counts={item.attachments.length} icon={<PaperClipOutlined />} />
+              </CardInfoInner>
+              <AvatarsContainer>
                 {item.members.map((member) => (
                   <AssigneeAvatar key={member} id={member} size={25} chain />
                 ))}
-              </div>
-            </div>
-          </Card>
-        </div>
+              </AvatarsContainer>
+            </CardInfoContainer>
+          </DraggableCard>
+        </DraggableContainer>
       )}
     </Draggable>
   ));
@@ -72,20 +128,20 @@ function InnerList(props) {
   const { contents, dropProvided, cardData, listId } = props;
 
   return (
-    <div className="board-dropzone" ref={dropProvided.innerRef}>
+    <BoardDropzone ref={dropProvided.innerRef}>
       <InnerCardList cardData={cardData} contents={contents} listId={listId} />
       {dropProvided.placeholder}
-    </div>
+    </BoardDropzone>
   );
 }
 
 function SubIndicator(props) {
   if (props.counts) {
     return (
-      <p className="mb-0 mr-2">
+      <CountContainer>
         {props.icon}
-        <span className="ml-1">{props.counts}</span>
-      </p>
+        <Count>{props.counts}</Count>
+      </CountContainer>
     );
   }
   return null;
@@ -98,7 +154,7 @@ export default function BoardCard(props) {
     scrollContainerStyle,
     isDropDisabled,
     isCombineEnabled,
-    listId = "LIST",
+    listId = 'LIST',
     listType,
     style,
     contents,
@@ -116,17 +172,9 @@ export default function BoardCard(props) {
         renderClone={useClone}
       >
         {(dropProvided, dropSnapshot) => (
-          <Scrollbars
-            style={style}
-            className="board-wrapper"
-            autoHide
-            {...dropProvided.droppableProps}
-          >
+          <ScrollBars style={style} autoHide {...dropProvided.droppableProps}>
             {internalScroll ? (
-              <div
-                className="board-scrollContainer"
-                style={scrollContainerStyle}
-              >
+              <div style={scrollContainerStyle}>
                 <InnerList
                   contents={contents}
                   listId={listId}
@@ -142,7 +190,7 @@ export default function BoardCard(props) {
                 dropProvided={dropProvided}
               />
             )}
-          </Scrollbars>
+          </ScrollBars>
         )}
       </Droppable>
     </>

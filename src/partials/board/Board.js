@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
+import styled from 'styled-components';
 import { ScrumboardContext } from '../scrumboard/ScrumboardContext';
 import { Draggable } from 'react-beautiful-dnd';
 import { modalModeTypes } from '../utils';
 import EllipsisDropdown from '../../components/EllipsisDropdown';
-import { Menu, Form, Input, Modal } from 'antd';
+import { Menu, Input, Modal } from 'antd';
 import {
   CloseOutlined,
   EditOutlined,
@@ -11,6 +12,51 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import BoardCard from './BoardCard';
+import { Form, FormItem } from '../../components/Shared';
+
+const BoardColumn = styled.div`
+  flex-direction: column;
+  min-width: 300px;
+  margin: 0 8px 15px;
+  display: flex;
+  border: 1px solid #e6ebf1;
+  background-color: #f0f2f5;
+  border-radius: 0.625rem;
+`;
+
+const BoardTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #e6ebf1;
+  background-color: #f0f2f5;
+  border-radius: 0.625rem;
+  transition: background-color 0.2s ease;
+  padding: 0.625rem 0.9375rem;
+  align-items: center;
+`;
+
+const Button = styled.div`
+  background-color: #fff;
+  justify-content: center;
+  height: 2.8rem;
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 0.625rem;
+  border-bottom-right-radius: 0.625rem;
+  border-top: 1px solid #e6ebf1;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+`;
+
+const H4 = styled.h4`
+  margin-bottom: 0 !important;
+`;
+
+const Pointer = styled.div`
+  cursor: pointer;
+`;
 
 const RenameForm = ({ title, finish }) => {
   const [form] = Form.useForm();
@@ -30,22 +76,21 @@ const RenameForm = ({ title, finish }) => {
       onFinish={onRenameSubmit}
       layout="vertical"
       autoComplete="off"
-      className="w-100"
       initialValues={{
         title: title,
       }}
     >
-      <Form.Item name="title" className="mb-0">
+      <FormItem name="title">
         <Input
           autoFocus
           value={title}
           suffix={
-            <div className="cursor-pointer" onClick={() => onClose()}>
+            <Pointer onClick={() => onClose()}>
               <CloseOutlined />
-            </div>
+            </Pointer>
           }
         />
-      </Form.Item>
+      </FormItem>
     </Form>
   );
 };
@@ -116,13 +161,13 @@ const Board = ({ title, contents, index, isScrollable, isCombineEnabled, useClon
   return (
     <Draggable draggableId={title} index={index}>
       {(provided, snapshot) => (
-        <div className="board-column" ref={provided.innerRef} {...provided.draggableProps}>
-          <div className="board-title" {...provided.dragHandleProps}>
+        <BoardColumn ref={provided.innerRef} {...provided.draggableProps}>
+          <BoardTitle {...provided.dragHandleProps}>
             {renameActive === title ? (
               <RenameForm title={title} finish={onFinish} />
             ) : (
               <>
-                <h4 className="mb-0">{title}</h4>
+                <H4>{title}</H4>
                 <EllipsisDropdown
                   menu={
                     <Menu>
@@ -139,7 +184,7 @@ const Board = ({ title, contents, index, isScrollable, isCombineEnabled, useClon
                 />
               </>
             )}
-          </div>
+          </BoardTitle>
           <BoardCard
             listId={title}
             listType="CONTENT"
@@ -150,10 +195,10 @@ const Board = ({ title, contents, index, isScrollable, isCombineEnabled, useClon
             useClone={useClone}
             cardData={onUpdateCardModal}
           />
-          <div className="board-add" onClick={() => newCard(title)}>
+          <Button onClick={() => newCard(title)}>
             <div>Add task</div>
-          </div>
-        </div>
+          </Button>
+        </BoardColumn>
       )}
     </Draggable>
   );
